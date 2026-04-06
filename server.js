@@ -27,6 +27,19 @@ const app        = express();
 const PORT       = process.env.PORT || 3000;
 const JWT_SECRET = process.env.JWT_SECRET || "fallback_secret_change_me";
 
+async function ensureDatabase(res) {
+    const dbError = db.getLastConnectionError();
+    if (!dbError) return true;
+
+    const hostedHint = db.isConfiguredForHostedDb()
+        ? " Check DB_PORT and SSL settings for your hosted MySQL instance."
+        : " Check that your MySQL server is running and the database credentials are correct.";
+
+    return res.status(503).json({
+        error: "Database connection is unavailable." + hostedHint
+    });
+}
+
 // ─── Middleware ────────────────────────────────────────────────────────────────
 app.use(cors());
 app.use(bodyParser.json({ limit: "10mb" }));
@@ -54,6 +67,9 @@ app.post("/api/signup", async (req, res) => {
     if (!password || password.length < 8) {
         return res.status(400).json({ error: "Password must be at least 8 characters." });
     }
+
+    const dbReady = await ensureDatabase(res);
+    if (dbReady !== true) return dbReady;
 
     try {
         // Check email uniqueness
@@ -88,7 +104,7 @@ app.post("/api/signup", async (req, res) => {
         });
 
     } catch (err) {
-        console.error("Signup error:", err.message);
+        console.error("Signup error:", err);
         return res.status(500).json({ error: "Something went wrong. Please try again." });
     }
 });
@@ -108,6 +124,9 @@ app.post("/api/login", async (req, res) => {
     if (!password) {
         return res.status(400).json({ error: "Password is required." });
     }
+
+    const dbReady = await ensureDatabase(res);
+    if (dbReady !== true) return dbReady;
 
     try {
         const [rows] = await db.query(
@@ -139,7 +158,7 @@ app.post("/api/login", async (req, res) => {
         });
 
     } catch (err) {
-        console.error("Login error:", err.message);
+        console.error("Login error:", err);
         return res.status(500).json({ error: "Something went wrong. Please try again." });
     }
 });
