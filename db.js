@@ -2,9 +2,50 @@ require("dotenv").config();
 const fs = require("fs");
 const mysql = require("mysql2");
 
+function parseDatabaseUrl() {
+    const rawUrl = process.env.DATABASE_URL || process.env.MYSQL_URL || process.env.CLEARDB_DATABASE_URL;
+    if (!rawUrl) return null;
+
+    try {
+        const parsed = new URL(rawUrl);
+        return {
+            host: parsed.hostname,
+            port: parsed.port ? Number(parsed.port) : 3306,
+            user: decodeURIComponent(parsed.username),
+            password: decodeURIComponent(parsed.password),
+            database: parsed.pathname.replace(/^\//, "")
+        };
+    } catch (err) {
+        console.error("DB URL parse error:", err.message);
+        return null;
+    }
+}
+
+function parseHostAndPort(value) {
+    if (!value) {
+        return { host: "localhost", port: 3306 };
+    }
+
+    const trimmed = value.trim();
+    const parts = trimmed.split(":");
+
+    if (parts.length === 2 && /^\d+$/.test(parts[1])) {
+        return { host: parts[0], port: Number(parts[1]) };
+    }
+
+    return {
+        host: trimmed,
+        port: Number(process.env.DB_PORT || 3306)
+    };
+}
+
 function parseSslConfig() {
     const sslMode = (process.env.DB_SSL_MODE || process.env.DB_SSL || "").toLowerCase();
     const caPath = process.env.DB_SSL_CA;
+
+    if (!sslMode && process.env.DB_HOST && process.env.DB_HOST !== "localhost") {
+        return { rejectUnauthorized: false };
+    }
 
     if (!sslMode || sslMode === "false" || sslMode === "off" || sslMode === "disabled") {
         return undefined;
@@ -28,12 +69,15 @@ function parseSslConfig() {
     return undefined;
 }
 
+const databaseUrlConfig = parseDatabaseUrl();
+const hostAndPort = parseHostAndPort(process.env.DB_HOST);
+
 const poolConfig = {
-    host: process.env.DB_HOST || "localhost",
-    port: Number(process.env.DB_PORT || 3306),
-    user: process.env.DB_USER || "root",
-    password: process.env.DB_PASSWORD || "",
-    database: process.env.DB_NAME || "curebot",
+    host: databaseUrlConfig?.host || hostAndPort.host,
+    port: databaseUrlConfig?.port || hostAndPort.port,
+    user: databaseUrlConfig?.user || process.env.DB_USER || "root",
+    password: databaseUrlConfig?.password || process.env.DB_PASSWORD || "",
+    database: databaseUrlConfig?.database || process.env.DB_NAME || "curebot",
     waitForConnections: true,
     connectionLimit: Number(process.env.DB_CONNECTION_LIMIT || 10),
     queueLimit: 0,
@@ -49,6 +93,8 @@ const pool = mysql.createPool(poolConfig);
 const promisePool = pool.promise();
 
 let lastConnectionError = null;
+let lastInitError = null;
+let initPromise = null;
 
 const connectionErrorCodes = new Set([
     "ECONNREFUSED",
@@ -70,6 +116,8 @@ function isConnectionError(err) {
 }
 
 async function runQuery(method, args) {
+    await init();
+
     try {
         const result = await promisePool[method](...args);
         lastConnectionError = null;
@@ -82,27 +130,66 @@ async function runQuery(method, args) {
     }
 }
 
+async function ensureSchema() {
+    await promisePool.query(`
+        CREATE TABLE IF NOT EXISTS users (
+            id INT UNSIGNED NOT NULL AUTO_INCREMENT,
+            name VARCHAR(100) NOT NULL,
+            email VARCHAR(255) NOT NULL,
+            password VARCHAR(255) NOT NULL,
+            created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+            PRIMARY KEY (id),
+            UNIQUE KEY uq_users_email (email)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+    `);
+
+    await promisePool.query(`
+        CREATE TABLE IF NOT EXISTS chat_logs (
+            id INT UNSIGNED NOT NULL AUTO_INCREMENT,
+            user_id INT UNSIGNED NOT NULL,
+            role ENUM('user','bot') NOT NULL,
+            message TEXT NOT NULL,
+            created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            PRIMARY KEY (id),
+            CONSTRAINT fk_chatlogs_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+    `);
+}
+
 async function ping() {
     try {
         await promisePool.query("SELECT 1");
+        await ensureSchema();
         if (lastConnectionError) {
             console.log("MySQL Connected");
         }
         lastConnectionError = null;
+        lastInitError = null;
         return true;
     } catch (err) {
         lastConnectionError = err;
+        lastInitError = err;
         console.error("DB Error:", err.code || err.message || err);
         return false;
     }
 }
 
-ping();
+function init() {
+    if (!initPromise) {
+        initPromise = ping();
+    }
+    return initPromise;
+}
+
+init();
 
 module.exports = {
     query: (...args) => runQuery("query", args),
     execute: (...args) => runQuery("execute", args),
     getLastConnectionError: () => lastConnectionError,
+    getLastInitError: () => lastInitError,
     isConfiguredForHostedDb: () => Boolean(process.env.DB_HOST && process.env.DB_HOST !== "localhost"),
-    isConnectionError
+    isConnectionError,
+    init
 };

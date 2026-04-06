@@ -28,7 +28,8 @@ const PORT       = process.env.PORT || 3000;
 const JWT_SECRET = process.env.JWT_SECRET || "fallback_secret_change_me";
 
 async function ensureDatabase(res) {
-    const dbError = db.getLastConnectionError();
+    await db.init();
+    const dbError = db.getLastConnectionError() || db.getLastInitError();
     if (!dbError) return true;
 
     const hostedHint = db.isConfiguredForHostedDb()
