@@ -98,8 +98,9 @@ app.post("/api/signup", async (req, res) => {
         );
 
         // Issue JWT
+        const userId = Number(result.insertId);
         const token = jwt.sign(
-            { id: result.insertId, email: email.toLowerCase(), username: username.trim() },
+            { id: userId, email: email.toLowerCase(), username: username.trim() },
             JWT_SECRET,
             { expiresIn: "1h" }
         );
@@ -107,7 +108,7 @@ app.post("/api/signup", async (req, res) => {
         return res.status(201).json({
             message: "Account created successfully.",
             token,
-            user: { id: result.insertId, username: username.trim(), email: email.toLowerCase() }
+            user: { id: userId, username: username.trim(), email: email.toLowerCase() }
         });
 
     } catch (err) {
@@ -118,7 +119,10 @@ app.post("/api/signup", async (req, res) => {
         if (err.code === "ER_DUP_ENTRY") {
             return res.status(409).json({ error: "An account with this email or username already exists." });
         }
-        return res.status(500).json({ error: "Something went wrong. Please try again." });
+        return res.status(500).json({ 
+            error: "Something went wrong during signup. Please try again.",
+            details: err.code || err.message || "Unknown error"
+        });
     }
 });
 

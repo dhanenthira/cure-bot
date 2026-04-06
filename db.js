@@ -40,7 +40,7 @@ function parseHostAndPort(value) {
 }
 
 function parseSslConfig() {
-    const sslMode = (process.env.DB_SSL_MODE || process.env.DB_SSL || "").toLowerCase();
+    const sslMode = (process.env.DB_SSL_MODE || process.env.DB_SSL || process.env.Db_SSL || "").toLowerCase();
     const caPath = process.env.DB_SSL_CA;
 
     if (!sslMode && process.env.DB_HOST && process.env.DB_HOST !== "localhost") {
@@ -81,7 +81,8 @@ const poolConfig = {
     waitForConnections: true,
     connectionLimit: Number(process.env.DB_CONNECTION_LIMIT || 10),
     queueLimit: 0,
-    enableKeepAlive: true
+    enableKeepAlive: true,
+    connectTimeout: 15000 // 15s timeout for cloud databases
 };
 
 const ssl = parseSslConfig();
@@ -108,7 +109,11 @@ const connectionErrorCodes = new Set([
     "PROTOCOL_PACKETS_OUT_OF_ORDER",
     "ER_ACCESS_DENIED_ERROR",
     "ER_CON_COUNT_ERROR",
-    "HANDSHAKE_SSL_ERROR"
+    "HANDSHAKE_SSL_ERROR",
+    "ER_BAD_DB_ERROR",
+    "ER_DBACCESS_DENIED_ERROR",
+    "ER_HOST_NOT_PRIVILEGED",
+    "ER_ACCESS_DENIED_NO_PASSWORD_ERROR"
 ]);
 
 function isConnectionError(err) {
