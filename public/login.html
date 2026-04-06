@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cure Bot - Login</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="shortcut icon" href="logo/screen-removebg-preview.png" type="image/x-icon">
+  <style>
+    :root {
+      --primary: #2ECC71;
+      --secondary: #3498DB;
+      --bg: #F5F7FA;
+      --text: #2C3E50;
+      --card-bg: #FFFFFF;
+      --input-bg: #FFFFFF;
+      --input-border: #E2E8F0;
+      --text-muted: #718096;
+      --radius: 12px;
+    }
+    .dark-mode {
+      --primary: #2ECC71;
+      --secondary: #3498DB;
+      --bg: #121212;
+      --text: #FFFFFF;
+      --card-bg: #1E1E1E;
+      --input-bg: #2D2D2D;
+      --input-border: #4A5568;
+      --text-muted: #A0AEC0;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      transition: background 0.3s, color 0.3s;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 420px;
+      padding: 20px;
+    }
+
+    .card {
+      background: var(--card-bg);
+      border-radius: var(--radius);
+      padding: 40px 30px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+      transition: background 0.3s, box-shadow 0.3s;
+    }
+
+    .logo-container {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+    .logo-icon {
+      font-size: 40px;
+      color: var(--primary);
+      margin-bottom: 10px;
+    }
+    .logo-title {
+      font-size: 24px;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+    }
+    .logo-subtitle {
+      font-size: 14px;
+      color: var(--text-muted);
+      margin-top: 5px;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+      position: relative;
+    }
+    .form-group label {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 14px;
+      font-weight: 500;
+    }
+    .form-control {
+      width: 100%;
+      padding: 14px 16px;
+      border-radius: 8px;
+      border: 1px solid var(--input-border);
+      background: var(--input-bg);
+      color: var(--text);
+      font-size: 15px;
+      font-family: inherit;
+      transition: all 0.2s;
+      outline: none;
+    }
+    .form-control:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(46, 204, 113, 0.15);
+    }
+    
+    .password-wrapper {
+      position: relative;
+    }
+    .toggle-password {
+      position: absolute;
+      right: 16px;
+      top: 50%;
+      transform: translateY(-50%);
+      cursor: pointer;
+      color: var(--text-muted);
+      font-size: 18px;
+      user-select: none;
+    }
+    .toggle-password:hover { color: var(--text); }
+
+    .forgot-password {
+      display: block;
+      text-align: right;
+      font-size: 13px;
+      color: var(--secondary);
+      text-decoration: none;
+      margin-top: 8px;
+      font-weight: 500;
+    }
+    .forgot-password:hover { text-decoration: underline; }
+
+    .btn {
+      width: 100%;
+      padding: 14px;
+      background: var(--primary);
+      color: #FFFFFF;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.1s;
+      margin-top: 10px;
+    }
+    .btn:hover { background: #27AE60; }
+    .btn:active { transform: scale(0.98); }
+    
+    .link-container {
+      text-align: center;
+      margin-top: 25px;
+      font-size: 14px;
+      color: var(--text-muted);
+    }
+    .link-container a {
+      color: var(--primary);
+      text-decoration: none;
+      font-weight: 600;
+    }
+    .link-container a:hover { text-decoration: underline; }
+
+    .error-msg {
+      color: #E74C3C;
+      font-size: 13px;
+      margin-top: 5px;
+      display: none;
+    }
+    #globalError {
+      text-align: center;
+      background: rgba(231, 76, 60, 0.1);
+      color: #E74C3C;
+      padding: 10px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      font-size: 14px;
+      font-weight: 500;
+      display: none;
+    }
+
+    /* Dark Mode Toggle */
+    .theme-toggle {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      background: var(--card-bg);
+      border: 1px solid var(--input-border);
+      color: var(--text);
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+      transition: all 0.2s;
+      font-size: 18px;
+    }
+    .theme-toggle:hover {
+      transform: scale(1.05);
+    }
+  </style>
+</head>
+<body>
+
+  <button class="theme-toggle" id="themeToggle" title="Toggle Dark Mode">🌙</button>
+
+  <div class="container">
+    <div class="card">
+      <div class="logo-container">
+        <div class="logo-icon">🩺</div>
+        <div class="logo-title">Cure Bot</div>
+        <div class="logo-subtitle">Your AI Medical Assistant</div>
+      </div>
+
+      <div id="globalError"></div>
+
+      <form id="loginForm">
+        <div class="form-group">
+          <label for="identifier">Email</label>
+          <input type="text" id="identifier" class="form-control" placeholder="Enter your email" required autocomplete="username">
+          <div class="error-msg" id="identifierError"></div>
+        </div>
+
+        <div class="form-group">
+          <label for="password">Password</label>
+          <div class="password-wrapper">
+            <input type="password" id="password" class="form-control" placeholder="Enter your password" required autocomplete="current-password">
+            <span class="toggle-password" id="togglePassword"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg></span>
+          </div>
+          <a href="#" class="forgot-password">Forgot Password?</a>
+          <div class="error-msg" id="passwordError"></div>
+        </div>
+
+        <button type="submit" class="btn" id="loginBtn">Log In</button>
+      </form>
+
+      <div class="link-container">
+        Don't have an account? <a href="/signup">Sign up</a>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Dark mode toggle
+    const themeToggle = document.getElementById('themeToggle');
+    const isDark = localStorage.getItem('theme') === 'dark';
+    if (isDark) {
+      document.documentElement.classList.add('dark-mode');
+      themeToggle.textContent = '☀️';
+    }
+
+    themeToggle.addEventListener('click', () => {
+      document.documentElement.classList.toggle('dark-mode');
+      if (document.documentElement.classList.contains('dark-mode')) {
+        localStorage.setItem('theme', 'dark');
+        themeToggle.textContent = '☀️';
+      } else {
+        localStorage.setItem('theme', 'light');
+        themeToggle.textContent = '🌙';
+      }
+    });
+
+    // Password Toggle
+    const togglePassword = document.getElementById('togglePassword');
+    const passwordInput = document.getElementById('password');
+    togglePassword.addEventListener('click', () => {
+      if (passwordInput.type === 'password') {
+        passwordInput.type = 'text';
+        togglePassword.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>';
+      } else {
+        passwordInput.type = 'password';
+        togglePassword.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>';
+      }
+    });
+
+    // Form submission
+    const loginForm = document.getElementById('loginForm');
+    const globalError = document.getElementById('globalError');
+    const loginBtn = document.getElementById('loginBtn');
+
+    loginForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const identifier = document.getElementById('identifier').value.trim();
+      const password = document.getElementById('password').value;
+      
+      globalError.style.display = 'none';
+      loginBtn.textContent = 'Logging in...';
+      loginBtn.disabled = true;
+
+      try {
+        const response = await fetch('/api/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username: identifier, password: password })
+        });
+        
+        const data = await response.json();
+        
+        if (!response.ok) {
+          throw new Error(data.error || 'Login failed');
+        }
+        
+        // Success
+        localStorage.setItem('token', data.token);
+        localStorage.setItem('username', data.user.username);
+        window.location.href = '/chat';
+      } catch (err) {
+        globalError.textContent = err.message;
+        globalError.style.display = 'block';
+      } finally {
+        loginBtn.textContent = 'Log In';
+        loginBtn.disabled = false;
+      }
+    });
+
+    // Auto-redirect if already logged in
+    window.addEventListener('DOMContentLoaded', () => {
+      if (localStorage.getItem('token')) {
+        window.location.href = '/chat';
+      }
+    });
+  </script>
+</body>
+</html>

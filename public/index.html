@@ -1,0 +1,713 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cure Bot - AI Medical Assistant</title>
+  <meta name="description" content="Cure Bot - Your AI-powered healthcare chatbot for medical queries and health assistance." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="shortcut icon" href="logo/screen-removebg-preview.png" type="image/x-icon">
+  <style>
+    /* ── CSS Variables ──────────────────────────── */
+    :root {
+      --primary: #2ECC71;
+      --primary-dark: #27AE60;
+      --secondary: #3498DB;
+      --secondary-light: #EBF5FB;
+      --bg: #F5F7FA;
+      --text: #2C3E50;
+      --card-bg: #FFFFFF;
+      --input-bg: #FFFFFF;
+      --input-border: #E2E8F0;
+      --text-muted: #718096;
+      --chat-bg: #F0F2F5;
+      --user-bubble: #D5F5E3;
+      --user-bubble-text: #1B4332;
+      --bot-bubble: #FFFFFF;
+      --bot-bubble-text: #2C3E50;
+      --header-bg: #FFFFFF;
+      --header-border: #E2E8F0;
+      --suggestion-bg: #FFFFFF;
+      --suggestion-border: #E2E8F0;
+      --suggestion-hover: #F0FFF4;
+      --disclaimer-bg: rgba(52, 152, 219, 0.08);
+      --disclaimer-text: #5B7083;
+      --source-bg: rgba(46, 204, 113, 0.1);
+      --source-text: #27AE60;
+      --shadow-sm: 0 1px 3px rgba(0,0,0,0.06);
+      --shadow-md: 0 4px 12px rgba(0,0,0,0.08);
+      --radius: 12px;
+      --sidebar-bg: #FFFFFF;
+      --sidebar-border: #E2E8F0;
+      --history-item-hover: #F7FAFC;
+    }
+
+    .dark-mode {
+      --bg: #121212;
+      --text: #FFFFFF;
+      --card-bg: #1E1E1E;
+      --input-bg: #2D2D2D;
+      --input-border: #4A5568;
+      --text-muted: #A0AEC0;
+      --chat-bg: #181818;
+      --user-bubble: #1B5E20;
+      --user-bubble-text: #E8F5E9;
+      --bot-bubble: #2D2D2D;
+      --bot-bubble-text: #E0E0E0;
+      --header-bg: #1E1E1E;
+      --header-border: #333;
+      --suggestion-bg: #2D2D2D;
+      --suggestion-border: #4A5568;
+      --suggestion-hover: #1B5E20;
+      --disclaimer-bg: rgba(52, 152, 219, 0.15);
+      --disclaimer-text: #90CAF9;
+      --source-bg: rgba(46, 204, 113, 0.2);
+      --source-text: #66BB6A;
+      --shadow-sm: 0 1px 3px rgba(0,0,0,0.2);
+      --shadow-md: 0 4px 12px rgba(0,0,0,0.3);
+      --sidebar-bg: #1E1E1E;
+      --sidebar-border: #333;
+      --history-item-hover: #2D2D2D;
+    }
+
+    /* ── Reset ──────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      transition: background 0.3s, color 0.3s;
+      overflow: hidden;
+    }
+
+    /* ── Header ─────────────────────────────────── */
+    .header {
+      background: var(--header-bg);
+      border-bottom: 1px solid var(--header-border);
+      padding: 12px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: var(--shadow-sm);
+      z-index: 10;
+      transition: background 0.3s, border-color 0.3s;
+    }
+
+    .header-left { display: flex; align-items: center; gap: 10px; }
+
+    .header-logo {
+      width: 38px; height: 38px;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 16px; font-weight: bold; color: white; flex-shrink: 0;
+    }
+
+    .header-info h1 { font-size: 17px; font-weight: 700; line-height: 1.2; }
+    .header-info p { font-size: 12px; color: var(--text-muted); line-height: 1.2; }
+
+    .header-right { display: flex; align-items: center; gap: 10px; }
+
+    .user-profile {
+      display: flex; align-items: center; gap: 8px;
+      padding: 6px 12px; background: var(--chat-bg);
+      border-radius: 20px; font-size: 13px; font-weight: 500;
+      color: var(--text); transition: background 0.2s;
+    }
+
+    .user-avatar {
+      width: 28px; height: 28px;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      border-radius: 50%; display: flex; align-items: center; justify-content: center;
+      font-size: 14px; color: white; font-weight: 600;
+    }
+
+    .theme-toggle {
+      background: none; border: 1px solid var(--input-border); color: var(--text-muted);
+      padding: 6px 14px; border-radius: 8px; font-size: 13px; font-family: inherit;
+      font-weight: 500; cursor: pointer; transition: all 0.2s;
+    }
+    .theme-toggle:hover { color: var(--text); border-color: var(--primary); background: rgba(46, 204, 113, 0.05); }
+
+    .logout-btn {
+      background: none; border: 1px solid var(--input-border); color: var(--text-muted);
+      padding: 6px 14px; border-radius: 8px; font-size: 13px; font-family: inherit;
+      font-weight: 500; cursor: pointer; transition: all 0.2s;
+    }
+    .logout-btn:hover { color: #E74C3C; border-color: #E74C3C; background: rgba(231, 76, 60, 0.05); }
+
+    /* ── Main Layout (Chat + Sidebar) ────────────── */
+    .main-wrapper {
+      flex: 1;
+      display: flex;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .chat-container {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .sidebar {
+      width: 300px;
+      background: var(--sidebar-bg);
+      border-left: 1px solid var(--sidebar-border);
+      display: flex;
+      flex-direction: column;
+      transition: background 0.3s, border-color 0.3s;
+      z-index: 5;
+    }
+
+    .sidebar-header {
+      padding: 15px 20px;
+      border-bottom: 1px solid var(--sidebar-border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .sidebar-header h2 { font-size: 15px; font-weight: 600; }
+    .clear-history-btn {
+      background: none; border: none; font-size: 12px; color: var(--text-muted); cursor: pointer;
+    }
+    .clear-history-btn:hover { color: #E74C3C; text-decoration: underline; }
+
+    .history-list {
+      flex: 1;
+      overflow-y: auto;
+      padding: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .history-list::-webkit-scrollbar { width: 4px; }
+    .history-list::-webkit-scrollbar-thumb { background: var(--input-border); border-radius: 2px; }
+
+    .history-item {
+      padding: 10px 12px;
+      border-radius: 8px;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      transition: background 0.2s;
+    }
+    .history-item:hover { background: var(--history-item-hover); }
+
+    .history-item.bot { display: none; } /* Only show user prompts in history list generally, or show all */
+    
+    .history-role { font-size: 11px; font-weight: 600; color: var(--primary); text-transform: uppercase; }
+    .history-text { font-size: 13px; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 1.4; }
+    .history-date { font-size: 10px; color: var(--text-muted); }
+
+    /* ── Chat Container ────────────────────────── */
+    .chat-area {
+      flex: 1; overflow-y: auto; padding: 20px; background: var(--chat-bg);
+      display: flex; flex-direction: column; gap: 16px;
+      transition: background 0.3s; scroll-behavior: smooth;
+    }
+
+    .chat-area::-webkit-scrollbar { width: 6px; }
+    .chat-area::-webkit-scrollbar-track { background: transparent; }
+    .chat-area::-webkit-scrollbar-thumb { background: var(--input-border); border-radius: 3px; }
+
+    /* ── Message Bubbles ────────────────────────── */
+    .message { display: flex; gap: 10px; max-width: 75%; animation: fadeInUp 0.3s ease; }
+    @keyframes fadeInUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+    .message.user { align-self: flex-end; flex-direction: row-reverse; }
+    .message.bot { align-self: flex-start; }
+
+    .msg-avatar {
+      width: 32px; height: 32px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 14px; font-weight: bold; flex-shrink: 0; margin-top: 2px;
+    }
+    .user .msg-avatar { background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color: white; }
+    .bot .msg-avatar { background: linear-gradient(135deg, var(--secondary), #2980B9); color: white; }
+
+    .bubble {
+      padding: 12px 16px; border-radius: 16px; font-size: 14px; line-height: 1.55;
+      box-shadow: var(--shadow-sm); word-wrap: break-word; transition: background 0.3s;
+    }
+    .bubble img { max-width: 100%; border-radius: 8px; margin-top: 5px; }
+    .user .bubble { background: var(--user-bubble); color: var(--user-bubble-text); border-bottom-right-radius: 4px; }
+    .bot .bubble { background: var(--bot-bubble); color: var(--bot-bubble-text); border-bottom-left-radius: 4px; }
+
+    /* ── Bot Response Extras ────────────────────── */
+    .bot-meta { margin-top: 10px; display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+    .source-badge {
+      display: inline-flex; align-items: center; gap: 4px;
+      background: var(--source-bg); color: var(--source-text);
+      padding: 3px 10px; border-radius: 12px; font-size: 11px; font-weight: 600;
+    }
+    .disclaimer-text {
+      display: block; margin-top: 8px; padding: 8px 12px;
+      background: var(--disclaimer-bg); color: var(--disclaimer-text);
+      border-radius: 8px; font-size: 11px; font-style: italic; line-height: 1.4;
+    }
+
+    /* ── Typing Indicator ──────────────────────── */
+    .typing-indicator { display: flex; gap: 10px; align-self: flex-start; max-width: 75%; animation: fadeInUp 0.3s ease; }
+    .typing-dots {
+      background: var(--bot-bubble); padding: 14px 18px; border-radius: 16px; border-bottom-left-radius: 4px;
+      display: flex; align-items: center; gap: 5px; box-shadow: var(--shadow-sm);
+    }
+    .typing-dots span {
+      width: 8px; height: 8px; border-radius: 50%; background: var(--primary);
+      animation: bounce 1.4s infinite ease-in-out both;
+    }
+    .typing-dots span:nth-child(1) { animation-delay: 0s; }
+    .typing-dots span:nth-child(2) { animation-delay: 0.16s; }
+    .typing-dots span:nth-child(3) { animation-delay: 0.32s; }
+    @keyframes bounce { 0%, 80%, 100% { transform: scale(0.6); opacity: 0.4; } 40% { transform: scale(1); opacity: 1; } }
+
+    .typing-label { font-size: 12px; color: var(--text-muted); margin-left: 42px; margin-top: 4px; animation: fadeInUp 0.3s ease; }
+
+    /* ── Smart Suggestions ─────────────────────── */
+    .suggestions-container {
+      padding: 8px 20px; background: var(--chat-bg); display: flex; gap: 8px; flex-wrap: wrap; transition: background 0.3s;
+    }
+    .suggestion-chip {
+      padding: 8px 16px; background: var(--suggestion-bg); border: 1px solid var(--suggestion-border);
+      border-radius: 20px; font-size: 13px; font-family: inherit; font-weight: 500;
+      color: var(--text); cursor: pointer; transition: all 0.2s; white-space: nowrap;
+    }
+    .suggestion-chip:hover {
+      background: var(--suggestion-hover); border-color: var(--primary); color: var(--primary-dark);
+      transform: translateY(-1px); box-shadow: var(--shadow-sm);
+    }
+
+    /* ── Input Area ─────────────────────────────── */
+    .input-area {
+      background: var(--header-bg); border-top: 1px solid var(--header-border);
+      padding: 14px 20px; display: flex; align-items: center; gap: 10px;
+      transition: background 0.3s, border-color 0.3s;
+    }
+    
+    .attachment-btn {
+      width: 40px; height: 40px; border-radius: 50%; border: 1px solid var(--input-border);
+      background: var(--input-bg); color: var(--text-muted);
+      display: flex; align-items: center; justify-content: center; cursor: pointer;
+      transition: all 0.2s; flex-shrink: 0;
+    }
+    .attachment-btn:hover { border-color: var(--primary); color: var(--primary); }
+
+    .input-area input[type="text"] {
+      flex: 1; padding: 12px 18px; border: 1px solid var(--input-border);
+      border-radius: 24px; background: var(--input-bg); color: var(--text);
+      font-size: 14px; font-family: inherit; outline: none; transition: all 0.2s;
+    }
+    .input-area input[type="text"]::placeholder { color: var(--text-muted); }
+    .input-area input[type="text"]:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(46, 204, 113, 0.12); }
+
+    .send-btn {
+      width: 44px; height: 44px; background: var(--primary); color: white;
+      border: none; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+      cursor: pointer; transition: all 0.2s; flex-shrink: 0;
+    }
+    .send-btn:hover { background: var(--primary-dark); transform: scale(1.05); }
+    .send-btn:active { transform: scale(0.95); }
+    .send-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+    .send-btn svg { width: 20px; height: 20px; fill: white; }
+
+    /* ── Preview Area ─────────────────────────── */
+    .preview-area {
+      padding: 0 20px 10px 20px; background: var(--chat-bg); display: none; gap: 10px; align-items: center;
+    }
+    .preview-pill {
+      display: inline-flex; align-items: center; gap: 8px; background: var(--input-bg);
+      border: 1px solid var(--input-border); padding: 4px 10px; border-radius: 16px; font-size: 12px;
+    }
+    .preview-pill img { max-height: 20px; border-radius: 4px; }
+    .preview-close { cursor: pointer; color: #E74C3C; font-weight: bold; }
+
+    /* ── Footer Disclaimer ─────────────────────── */
+    .footer-disclaimer {
+      text-align: center; font-size: 11px; color: var(--text-muted); padding: 8px 20px;
+      background: var(--header-bg); border-top: 1px solid var(--header-border);
+      transition: background 0.3s, border-color 0.3s;
+    }
+
+    /* ── Welcome Message ───────────────────────── */
+    .welcome-msg { text-align: center; padding: 30px 20px; }
+    .welcome-icon-wrap { font-size: 48px; margin-bottom: 12px; font-weight: bold; color: var(--primary); }
+    .welcome-msg h2 { font-size: 20px; font-weight: 700; margin-bottom: 8px; }
+    .welcome-msg p { font-size: 14px; color: var(--text-muted); max-width: 400px; margin: 0 auto; line-height: 1.5; }
+
+    /* ── Responsive ─────────────────────────────── */
+    @media (max-width: 768px) {
+      .main-wrapper { flex-direction: column; }
+      .sidebar { width: 100%; height: 200px; border-left: none; border-bottom: 1px solid var(--sidebar-border); }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ── Header ──────────────────────────────── -->
+  <header class="header">
+    <div class="header-left">
+      <div class="header-logo">CB</div>
+      <div class="header-info">
+        <h1>Cure Bot</h1>
+        <p>AI Medical Assistant</p>
+      </div>
+    </div>
+    <div class="header-right">
+      <div class="user-profile" id="userProfile">
+        <div class="user-avatar" id="userAvatarInitial">U</div>
+        <span id="usernameDisplay">User</span>
+      </div>
+      <button class="theme-toggle" id="themeToggle" title="Toggle Dark Mode">Dark</button>
+      <button class="logout-btn" id="logoutBtn">Logout</button>
+    </div>
+  </header>
+
+  <div class="main-wrapper">
+    <!-- ── Chat Area ───────────────────────────── -->
+    <div class="chat-container">
+      <div class="chat-area" id="chatArea">
+        <div class="welcome-msg">
+          <div class="welcome-icon-wrap">CB</div>
+          <h2>Welcome to Cure Bot</h2>
+          <p>I'm your AI medical assistant. Describe your symptoms, ask a health question, or upload a medical document.</p>
+        </div>
+      </div>
+
+      <!-- ── Smart Suggestions ───────────────────── -->
+      <div class="suggestions-container" id="suggestionsContainer">
+        <button class="suggestion-chip" data-query="I have a fever">Fever</button>
+        <button class="suggestion-chip" data-query="I have a headache">Headache</button>
+        <button class="suggestion-chip" data-query="I have a cold">Cold</button>
+        <button class="suggestion-chip" data-query="I have a cough">Cough</button>
+        <button class="suggestion-chip" data-query="I feel stomach pain">Stomach Pain</button>
+      </div>
+
+      <div class="preview-area" id="previewArea">
+        <div class="preview-pill" id="previewPill">
+          <span id="previewText">File.png</span>
+          <span class="preview-close" id="previewClose">X</span>
+        </div>
+      </div>
+
+      <!-- ── Input Area ──────────────────────────── -->
+      <div class="input-area">
+        <input type="file" id="fileInput" style="display:none" accept="image/*,.pdf,.doc,.docx" />
+        <button class="attachment-btn" id="attachBtn" title="Upload Photo or Document">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+            <path d="M16.5 6v11.5c0 2.21-1.79 4-4 4s-4-1.79-4-4V5a2.5 2.5 2.5 0 015 0v10.5c0 .55-.45 1-1 1s-1-.45-1-1V6H10v9.5a2.5 2.5 2.5 0 005 0V5c0-3.31-2.69-6-6-6S3 1.69 3 5v12.5c0 3.31 2.69 6 6 6s6-2.69 6-6V6h-1.5z"/>
+          </svg>
+        </button>
+        <button class="attachment-btn" id="cameraBtn" title="Open Camera">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+            <path d="M12 12c1.65 0 3-1.35 3-3s-1.35-3-3-3-3 1.35-3 3 1.35 3 3 3zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+            <path d="M20 4h-3.17L15 2H9L7.17 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5z"/>
+          </svg>
+        </button>
+        <input type="file" id="cameraInput" accept="image/*" capture="environment" style="display:none" />
+        
+        <input type="text" id="messageInput" placeholder="Describe your symptoms or upload a file..." autocomplete="off" />
+        <button class="send-btn" id="sendBtn" title="Send message">
+          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
+          </svg>
+        </button>
+      </div>
+
+      <!-- ── Footer ──────────────────────────────── -->
+      <div class="footer-disclaimer">
+        Disclaimer: This is for informational purposes only. Always consult a qualified healthcare provider.
+      </div>
+    </div>
+
+    <!-- ── History Sidebar ─────────────────────── -->
+    <div class="sidebar">
+      <div class="sidebar-header">
+        <h2>History</h2>
+        <button class="clear-history-btn" id="clearHistoryBtn">Clear</button>
+      </div>
+      <div class="history-list" id="historyList">
+        <!-- History items loaded here -->
+        <div style="font-size:12px; color:var(--text-muted); padding:10px; text-align:center;">Loading history...</div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ── DOM References ──────────────────────────
+    const chatArea = document.getElementById('chatArea');
+    const messageInput = document.getElementById('messageInput');
+    const sendBtn = document.getElementById('sendBtn');
+    const suggestionsContainer = document.getElementById('suggestionsContainer');
+    const themeToggle = document.getElementById('themeToggle');
+    const logoutBtn = document.getElementById('logoutBtn');
+    const usernameDisplay = document.getElementById('usernameDisplay');
+    const userAvatarInitial = document.getElementById('userAvatarInitial');
+    
+    const historyList = document.getElementById('historyList');
+    const clearHistoryBtn = document.getElementById('clearHistoryBtn');
+    
+    const fileInput = document.getElementById('fileInput');
+    const attachBtn = document.getElementById('attachBtn');
+    const cameraInput = document.getElementById('cameraInput');
+    const cameraBtn = document.getElementById('cameraBtn');
+    const previewArea = document.getElementById('previewArea');
+    const previewText = document.getElementById('previewText');
+    const previewClose = document.getElementById('previewClose');
+    
+    let uploadedFileUrl = null;
+
+    // ── Auth Guard ──────────────────────────────
+    (function () {
+      const token = localStorage.getItem('token');
+      if (!token) { window.location.href = '/'; return; }
+      const username = localStorage.getItem('username') || 'User';
+      usernameDisplay.textContent = username;
+      userAvatarInitial.textContent = username.charAt(0).toUpperCase();
+    })();
+
+    // ── Dark Mode ───────────────────────────────
+    if (localStorage.getItem('theme') === 'dark') {
+      document.documentElement.classList.add('dark-mode');
+      themeToggle.textContent = 'Light';
+    }
+
+    themeToggle.addEventListener('click', () => {
+      document.documentElement.classList.toggle('dark-mode');
+      const isDark = document.documentElement.classList.contains('dark-mode');
+      localStorage.setItem('theme', isDark ? 'dark' : 'light');
+      themeToggle.textContent = isDark ? 'Light' : 'Dark';
+    });
+
+    // ── Logout ──────────────────────────────────
+    logoutBtn.addEventListener('click', () => {
+      localStorage.removeItem('token');
+      localStorage.removeItem('username');
+      window.location.href = '/';
+    });
+
+    // ── File Upload Handlers ────────────────────
+    attachBtn.addEventListener('click', () => fileInput.click());
+    cameraBtn.addEventListener('click', () => cameraInput.click());
+    
+    async function handleFileUpload(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+      
+      const formData = new FormData();
+      formData.append('file', file);
+      
+      previewArea.style.display = 'flex';
+      previewText.textContent = 'Uploading...';
+      
+      try {
+        const token = localStorage.getItem('token');
+        const res = await fetch('/api/upload', {
+          method: 'POST',
+          headers: { 'Authorization': 'Bearer ' + token },
+          body: formData
+        });
+        const data = await res.json();
+        if (data.url) {
+          uploadedFileUrl = data.url;
+          previewText.textContent = data.filename;
+        } else {
+          previewArea.style.display = 'none';
+        }
+      } catch (err) {
+        console.error(err);
+        previewArea.style.display = 'none';
+      }
+      e.target.value = ''; // reset
+    }
+    
+    fileInput.addEventListener('change', handleFileUpload);
+    cameraInput.addEventListener('change', handleFileUpload);
+    previewClose.addEventListener('click', () => {
+      uploadedFileUrl = null;
+      previewArea.style.display = 'none';
+    });
+
+    // ── Load History ────────────────────────────
+    async function loadHistory() {
+      try {
+        const token = localStorage.getItem('token');
+        const res = await fetch('/api/chat-history', {
+          headers: { 'Authorization': 'Bearer ' + token }
+        });
+        const data = await res.json();
+        if (data.history) {
+          historyList.innerHTML = '';
+          if (data.history.length === 0) {
+            historyList.innerHTML = '<div style="font-size:12px; color:var(--text-muted); padding:10px; text-align:center;">No past chats found.</div>';
+          } else {
+            // Populate the middle chat Area if it's the first time page loads (welcome msg present)
+            const welcome = chatArea.querySelector('.welcome-msg');
+            let isInitialLoad = !!welcome;
+            if (isInitialLoad) {
+               chatArea.innerHTML = ''; // Remove welcome message
+            }
+
+            data.history.forEach(item => {
+              // 1. Render to sidebar
+              const el = document.createElement('div');
+              el.className = 'history-item ' + item.role;
+              const dateStr = new Date(item.created_at).toLocaleString();
+              el.innerHTML = `
+                <div class="history-role">${item.role === 'user' ? 'You' : 'Bot'}</div>
+                <div class="history-text">${escapeHtml(item.message)}</div>
+                <div class="history-date">${dateStr}</div>
+              `;
+              el.addEventListener('click', () => {
+                   if(item.role === 'user') { messageInput.value = item.message; }
+              });
+              historyList.appendChild(el);
+
+              // 2. Render to main chat map only on initial load
+              if (isInitialLoad) {
+                 if (item.role === 'user') addUserMessage(item.message, null);
+                 else addBotMessage(item.message);
+              }
+            });
+          }
+        }
+      } catch (err) {
+        historyList.innerHTML = '<div style="font-size:12px; color:red; padding:10px;">Failed to load.</div>';
+      }
+    }
+    loadHistory();
+    
+    clearHistoryBtn.addEventListener('click', async () => {
+      const token = localStorage.getItem('token');
+      await fetch('/api/chat-history', { method: 'DELETE', headers: { 'Authorization': 'Bearer ' + token } });
+      loadHistory();
+      // Keep chat area welcome message
+      chatArea.innerHTML = `
+        <div class="welcome-msg">
+          <div class="welcome-icon-wrap">CB</div>
+          <h2>Welcome to Cure Bot</h2>
+          <p>I'm your AI medical assistant. Describe your symptoms, ask a health question, or upload a medical document.</p>
+        </div>`;
+    });
+
+    // ── Chat Rendering ──────────────────────────
+    function addUserMessage(text, fileUrl) {
+      const div = document.createElement('div');
+      div.className = 'message user';
+      let content = escapeHtml(text);
+      if (fileUrl) {
+        if(fileUrl.match(/\.(jpeg|jpg|png|gif)$/i)) {
+            content += `<br><img src="${fileUrl}" />`;
+        } else {
+            content += `<br><a href="${fileUrl}" target="_blank" style="color:var(--primary); font-size:12px; font-weight:bold;">View Attachment</a>`;
+        }
+      }
+      div.innerHTML = `
+        <div class="msg-avatar">U</div>
+        <div class="bubble">${content}</div>
+      `;
+      chatArea.appendChild(div);
+      scrollToBottom();
+    }
+
+    function addBotMessage(text) {
+      const div = document.createElement('div');
+      div.className = 'message bot';
+      const sources = ['Medical KB', 'General Ref'];
+      const sourceBadges = sources.map(s => `<span class="source-badge">Ref: ${s}</span>`).join('');
+      div.innerHTML = `
+        <div class="msg-avatar">B</div>
+        <div class="bubble">
+          ${formatBotText(text)}
+          <div class="bot-meta">${sourceBadges}</div>
+          <div class="disclaimer-text">Note: This is an AI. Please consult a doctor.</div>
+        </div>
+      `;
+      chatArea.appendChild(div);
+      scrollToBottom();
+    }
+
+    // ── Helpers ─────────────────────────────────
+    function escapeHtml(str) {
+      const div = document.createElement('div');
+      div.textContent = str;
+      return div.innerHTML;
+    }
+    function formatBotText(text) {
+      return escapeHtml(text).replace(/\n/g, '<br>').replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+    }
+    function scrollToBottom() { chatArea.scrollTop = chatArea.scrollHeight; }
+
+    function showTyping() {
+      const div = document.createElement('div');
+      div.className = 'typing-indicator';
+      div.id = 'typingIndicator';
+      div.innerHTML = `
+        <div class="msg-avatar">B</div>
+        <div class="typing-dots"><span></span><span></span><span></span></div>
+      `;
+      chatArea.appendChild(div);
+      scrollToBottom();
+    }
+    function removeTyping() {
+      const indicator = document.getElementById('typingIndicator');
+      if (indicator) indicator.remove();
+    }
+
+    // ── Send Message ────────────────────────────
+    async function sendMessage(text) {
+      const message = text || messageInput.value.trim();
+      if (!message && !uploadedFileUrl) return;
+
+      const welcome = chatArea.querySelector('.welcome-msg');
+      if (welcome) welcome.remove();
+
+      let currentFileUrl = uploadedFileUrl;
+      addUserMessage(message, currentFileUrl);
+      
+      messageInput.value = '';
+      uploadedFileUrl = null;
+      previewArea.style.display = 'none';
+      messageInput.disabled = true; sendBtn.disabled = true;
+      showTyping();
+
+      try {
+        const token = localStorage.getItem('token');
+        const response = await fetch('/api/chat', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+          body: JSON.stringify({ message: message, image: currentFileUrl })
+        });
+        if (response.status === 401) {
+          localStorage.removeItem('token'); localStorage.removeItem('username'); window.location.href = '/'; return;
+        }
+        const data = await response.json();
+        removeTyping();
+        const reply = data.reply || data.error || 'Sorry, I could not process your request.';
+        addBotMessage(reply);
+        loadHistory(); // Refresh history
+      } catch (error) {
+        removeTyping(); addBotMessage('Sorry, server connection failed.');
+      } finally {
+        messageInput.disabled = false; sendBtn.disabled = false; messageInput.focus();
+      }
+    }
+
+    sendBtn.addEventListener('click', () => sendMessage());
+    messageInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') sendMessage(); });
+    suggestionsContainer.addEventListener('click', (e) => {
+      const chip = e.target.closest('.suggestion-chip');
+      if (chip) sendMessage(chip.getAttribute('data-query'));
+    });
+  </script>
+</body>
+</html>

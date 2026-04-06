@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+
+<html class="light scroll-smooth" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Cure Bot | Your Personal Clinical Curator</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&amp;family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link rel="shortcut icon" href="logo/screen-removebg-preview.png" type="image/x-icon">
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "on-tertiary": "#ffffff",
+              "on-primary-fixed-variant": "#005228",
+              "on-secondary": "#ffffff",
+              "tertiary": "#98472a",
+              "primary-container": "#2ecc71",
+              "surface-variant": "#e0e3e6",
+              "on-secondary-container": "#00476e",
+              "on-tertiary-container": "#772e14",
+              "secondary-fixed": "#cce5ff",
+              "inverse-on-surface": "#eff1f4",
+              "error": "#ba1a1a",
+              "surface": "#f7f9fc",
+              "primary": "#006d37",
+              "tertiary-fixed-dim": "#ffb59d",
+              "surface-tint": "#006d37",
+              "surface-dim": "#d8dadd",
+              "outline": "#6c7b6d",
+              "on-secondary-fixed": "#001d31",
+              "tertiary-fixed": "#ffdbd0",
+              "on-primary-fixed": "#00210c",
+              "on-error": "#ffffff",
+              "inverse-primary": "#4ae183",
+              "surface-container": "#eceef1",
+              "surface-container-low": "#f2f4f7",
+              "on-tertiary-fixed-variant": "#793015",
+              "on-background": "#191c1e",
+              "error-container": "#ffdad6",
+              "on-secondary-fixed-variant": "#004b73",
+              "secondary-fixed-dim": "#92ccff",
+              "primary-fixed-dim": "#4ae183",
+              "outline-variant": "#bbcbbb",
+              "surface-container-lowest": "#ffffff",
+              "surface-bright": "#f7f9fc",
+              "primary-fixed": "#6bfe9c",
+              "background": "#f7f9fc",
+              "on-primary-container": "#005027",
+              "secondary-container": "#5cb8fd",
+              "inverse-surface": "#2d3133",
+              "on-primary": "#ffffff",
+              "secondary": "#006397",
+              "tertiary-container": "#ff9875",
+              "surface-container-highest": "#e0e3e6",
+              "on-surface": "#191c1e",
+              "on-tertiary-fixed": "#390c00",
+              "on-surface-variant": "#3d4a3e",
+              "surface-container-high": "#e6e8eb",
+              "on-error-container": "#93000a"
+            },
+            fontFamily: {
+              "headline": ["Manrope"],
+              "body": ["Inter"],
+              "label": ["Inter"]
+            },
+            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .bg-glass {
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+        }
+        .shadow-clinical {
+            box-shadow: 0px 24px 48px rgba(25, 28, 30, 0.06);
+        }
+        .hero-gradient {
+            background: linear-gradient(135deg, #006d37 0%, #2ecc71 100%);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-surface font-body text-on-surface antialiased">
+<!-- Top Navigation -->
+<header class="bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl shadow-[0px_24px_48px_rgba(25,28,30,0.06)] docked full-width top-0 sticky z-50">
+<div class="flex justify-between items-center px-6 py-4 w-full max-w-none">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-emerald-500 text-2xl" data-icon="clinical_notes">clinical_notes</span>
+<h1 class="font-headline text-xl font-extrabold text-slate-900 tracking-tight">Cure Bot</h1>
+</div>
+<nav class="hidden md:flex items-center gap-8">
+<a class="text-emerald-600 font-headline font-bold text-sm tracking-tight transition-colors" href="/">Home</a>
+<a class="text-slate-500 font-headline font-bold text-sm tracking-tight hover:bg-slate-50 transition-colors p-2 rounded-lg" href="#features">Features</a>
+<a class="text-slate-500 font-headline font-bold text-sm tracking-tight hover:bg-slate-50 transition-colors p-2 rounded-lg" href="#">Security</a>
+<button onclick="window.location.href='/login'" class="bg-primary text-on-primary px-5 py-2 rounded-xl font-headline font-bold text-sm hover:opacity-90 active:scale-95 duration-200">Get Started</button>
+</nav>
+<div class="md:hidden">
+<span class="material-symbols-outlined text-slate-900" data-icon="menu">menu</span>
+</div>
+</div>
+</header>
+<main>
+<!-- Hero Section -->
+<section class="relative px-6 py-16 md:py-24 overflow-hidden">
+<div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center gap-12">
+<div class="flex-1 text-left">
+<div class="inline-flex items-center gap-2 px-3 py-1 bg-primary-container/10 text-primary rounded-full mb-6">
+<span class="material-symbols-outlined text-sm" data-icon="verified_user" style="font-variation-settings: 'FILL' 1;">verified_user</span>
+<span class="text-[10px] font-label font-bold uppercase tracking-widest">Medical Intelligence 2.0</span>
+</div>
+<h2 class="font-headline text-5xl md:text-7xl font-extrabold text-on-surface leading-tight tracking-tighter mb-6">
+                        Your Personal <br/><span class="text-primary italic">Clinical Curator</span>
+</h2>
+<p class="text-lg text-on-surface-variant max-w-lg mb-10 font-body leading-relaxed">
+                        Experience a sophisticated health companion that sifts through medical complexity to provide curated, evidence-based guidance whenever you need it.
+                    </p>
+<div class="flex flex-col sm:flex-row gap-4">
+<button onclick="window.location.href='/login'" class="hero-gradient text-on-primary px-8 py-4 rounded-xl font-headline font-extrabold text-lg shadow-xl shadow-primary/20 active:scale-95 transition-transform">
+                            Start Your Consultation
+                        </button>
+<button class="bg-surface-container-highest text-on-surface px-8 py-4 rounded-xl font-headline font-extrabold text-lg hover:bg-surface-container-high active:scale-95 transition-transform">
+                            View Case Studies
+                        </button>
+</div>
+</div>
+<div class="flex-1 relative">
+<div class="relative z-10 rounded-[2.5rem] overflow-hidden shadow-2xl bg-surface-container-lowest p-4">
+<img alt="Healthcare technology interface" class="rounded-[2rem] w-full object-cover aspect-[4/3]" data-alt="modern minimalist medical dashboard on a tablet with soft green charts and clinical data visualizations in bright daylight" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAmh91-HKqyKUuLnb2DF-jwq8hTx6GnXr_-38LXlwEqhOA5J1YbJ9QjyGL5WVPO3eXpbMoTXZSzW0x8r6YQUSrG4gh6QiRbmtLZRMBpOVNcponXtjXWo0sigT0hSpKiV2BYB668kk1O1IxH9lkF4urF_LN2Lc8GWXgGk8aUY-jENMe89MEQpLgB0AafINmDGwKuqkcxBokz7dKrk1mII30dWsAYJzdviug6A_Be3b02LspkFwep4tC5p41bWbhY3mEAD2VrrBtdHzI"/>
+</div>
+<!-- Decorative Glass Elements -->
+<div class="absolute -top-10 -right-10 w-40 h-40 bg-primary/10 rounded-full blur-3xl"></div>
+<div class="absolute -bottom-10 -left-10 w-64 h-64 bg-secondary-container/20 rounded-full blur-3xl"></div>
+</div>
+</div>
+</section>
+<!-- Feature Bento Grid -->
+<section id="features" class="px-6 py-20 bg-surface-container-low">
+<div class="max-w-7xl mx-auto">
+<div class="text-center mb-16">
+<h2 class="font-headline text-3xl font-bold tracking-tight mb-4">Precision-First Healthcare</h2>
+<p class="text-on-surface-variant max-w-2xl mx-auto">Our AI doesn't just answer questions; it curates clinical truth from the world's most trusted sources.</p>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-12 gap-6">
+<!-- Feature 1 -->
+<div class="md:col-span-8 bg-surface-container-lowest p-8 rounded-[2rem] shadow-clinical border-outline-variant/5 border relative overflow-hidden group">
+<div class="relative z-10">
+<span class="material-symbols-outlined text-primary text-4xl mb-6" data-icon="auto_awesome" style="font-variation-settings: 'FILL' 1;">auto_awesome</span>
+<h3 class="font-headline text-2xl font-bold mb-4">24/7 AI Guidance</h3>
+<p class="text-on-surface-variant max-w-md">Access medical insights instantly. Our assistant is trained on clinical protocols to provide nuanced symptom analysis and wellness planning at any hour.</p>
+</div>
+<img alt="Laboratory" class="absolute right-0 bottom-0 w-1/2 opacity-10 group-hover:opacity-20 transition-opacity pointer-events-none" data-alt="abstract close-up of high-tech laboratory equipment with glowing green lights and glass reflections" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB8GPgNMMLaNnCUNKFApWZS6mCX6AcJkCXXjoGjw1jl5aUv5fIRTLXpE-biuGSdWi0V1ygUAhJBZhISjhEDpCggoY_N1Bjmj4xA9VxTsq2vWgX-R3lMRB_j-p0k0_uR9dI1HRf_gx8DV1-9VGDqU2dTUmoaO88zQNzQeEC-HIRPMBT_5wA29TZvY5o3ptOHwXeEc2UIuFCGrcWm_vrSuhKIT7NQsrb2mdsWpK3-HeEXGln_sP4f2ZxecS7N1OEHsFBkieJp84zfjrE"/>
+</div>
+<!-- Feature 2 -->
+<div class="md:col-span-4 bg-primary text-on-primary p-8 rounded-[2rem] shadow-clinical flex flex-col justify-between">
+<div>
+<span class="material-symbols-outlined text-4xl mb-6" data-icon="verified">verified</span>
+<h3 class="font-headline text-2xl font-bold mb-4">Evidence-Based</h3>
+<p class="text-primary-fixed/80">Every response is cross-referenced with WHO, WebMD, and PubMed databases for clinical accuracy.</p>
+</div>
+<div class="mt-8 pt-6 border-t border-white/10 flex items-center gap-3">
+<span class="text-sm font-bold tracking-widest uppercase">Validated Sources</span>
+</div>
+</div>
+<!-- Feature 3 -->
+<div class="md:col-span-4 bg-surface-container-highest p-8 rounded-[2rem] shadow-clinical">
+<span class="material-symbols-outlined text-on-surface text-4xl mb-6" data-icon="lock">lock</span>
+<h3 class="font-headline text-xl font-bold mb-4">Data Privacy</h3>
+<p class="text-on-surface-variant">Military-grade encryption for all medical records. Your health data never leaves our secure perimeter.</p>
+</div>
+<!-- Feature 4 -->
+<div class="md:col-span-8 bg-surface-container-lowest p-8 rounded-[2rem] shadow-clinical flex flex-col md:flex-row items-center gap-8 border-outline-variant/10 border">
+<div class="flex-1">
+<h3 class="font-headline text-xl font-bold mb-4">Seamless Integration</h3>
+<p class="text-on-surface-variant">Connect with your wearable devices to provide the bot with real-time biometric context for better clinical accuracy.</p>
+</div>
+<div class="flex gap-4">
+<div class="w-16 h-16 bg-surface-container rounded-2xl flex items-center justify-center">
+<span class="material-symbols-outlined text-secondary" data-icon="watch">watch</span>
+</div>
+<div class="w-16 h-16 bg-surface-container rounded-2xl flex items-center justify-center">
+<span class="material-symbols-outlined text-primary" data-icon="smartphone">smartphone</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- How it Works -->
+<section class="px-6 py-20 bg-surface">
+<div class="max-w-7xl mx-auto">
+<div class="text-center mb-20">
+<span class="text-primary font-label font-bold uppercase tracking-widest text-xs">The Protocol</span>
+<h2 class="font-headline text-4xl font-extrabold mt-4">Simple. Precise. Human.</h2>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-12 relative">
+<!-- Step 1 -->
+<div class="relative z-10 flex flex-col items-center text-center">
+<div class="w-16 h-16 bg-primary-container text-on-primary-container rounded-full flex items-center justify-center font-headline font-extrabold text-xl mb-8 shadow-xl shadow-primary-container/20">1</div>
+<h4 class="font-headline text-xl font-bold mb-4">Initiate Chat</h4>
+<p class="text-on-surface-variant font-body">Describe your symptoms or health goals in plain, conversational English.</p>
+</div>
+<!-- Step 2 -->
+<div class="relative z-10 flex flex-col items-center text-center">
+<div class="w-16 h-16 bg-secondary-container text-on-secondary-container rounded-full flex items-center justify-center font-headline font-extrabold text-xl mb-8 shadow-xl shadow-secondary-container/20">2</div>
+<h4 class="font-headline text-xl font-bold mb-4">Clinical Sifting</h4>
+<p class="text-on-surface-variant font-body">Cure Bot cross-references clinical databases to identify the best action plan.</p>
+</div>
+<!-- Step 3 -->
+<div class="relative z-10 flex flex-col items-center text-center">
+<div class="w-16 h-16 bg-surface-variant text-on-surface-variant rounded-full flex items-center justify-center font-headline font-extrabold text-xl mb-8 shadow-xl">3</div>
+<h4 class="font-headline text-xl font-bold mb-4">Personal Guidance</h4>
+<p class="text-on-surface-variant font-body">Receive a curated report with clear next steps and data-driven recommendations.</p>
+</div>
+<!-- Connector line hidden on mobile -->
+<div class="hidden md:block absolute top-8 left-1/4 right-1/4 h-[2px] bg-outline-variant/20 -z-0"></div>
+</div>
+</div>
+</section>
+<!-- Trust & Compliance Section -->
+<section class="px-6 py-24">
+<div class="max-w-5xl mx-auto bg-white/40 backdrop-blur-md rounded-[2.5rem] p-12 shadow-clinical border border-white/20 text-center">
+<div class="flex flex-wrap justify-center gap-12 mb-12 opacity-60 grayscale hover:grayscale-0 transition-all duration-500">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary" data-icon="security">security</span>
+<span class="font-headline font-bold text-lg">HIPAA Compliant</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary" data-icon="encrypted">encrypted</span>
+<span class="font-headline font-bold text-lg">AES-256 Encryption</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary" data-icon="privacy_tip">privacy_tip</span>
+<span class="font-headline font-bold text-lg">GDPR Certified</span>
+</div>
+</div>
+<div class="max-w-2xl mx-auto">
+<div class="mb-8">
+<span class="material-symbols-outlined text-primary-container text-5xl" data-icon="format_quote" style="font-variation-settings: 'FILL' 1;">format_quote</span>
+</div>
+<p class="text-2xl font-headline font-bold text-on-surface italic mb-8">
+                        "Cure Bot has transformed how we manage preventative care. The precision of the AI guidance is unlike anything we've seen in consumer health tech."
+                    </p>
+<div class="flex items-center justify-center gap-4">
+<div class="w-12 h-12 rounded-full overflow-hidden">
+<img alt="Dr. Sarah Chen" data-alt="professional headshot of a female doctor in a white clinical coat smiling warmly against a soft blue background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDFq6P0DUOuaCv1jWQip6diGPEAuiU5_mRaFDn1J7Y0PdtsBe05bZ970dX92xmm0SoF5L4aTeudhQbjwG5ientKD9UX6nIL-37B5VdH49Zrh6o868NtMUrFltkyHVKrm5dA8OLEUd_QQzH_D2GQseKbbMfrAYmcxObX5Z_d4oXVQylJP_l0SppEFgNTW-aibnKUymyayzqBFU26yh060grUYWvK5-dtnI8Dy9eI2TOpr45S2c4YG8CDNaCWKumtIxNkWxateRf5Vjo"/>
+</div>
+<div class="text-left">
+<p class="font-headline font-bold text-sm">Dr. Sarah Chen</p>
+<p class="text-xs text-on-surface-variant">Chief Medical Officer, Vitalis Health</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Final CTA -->
+<section class="px-6 py-20 mb-20">
+<div class="max-w-7xl mx-auto hero-gradient rounded-[3rem] p-12 md:p-24 text-center text-on-primary relative overflow-hidden">
+<div class="relative z-10">
+<h2 class="font-headline text-4xl md:text-6xl font-extrabold mb-8">Ready to curate your health?</h2>
+<p class="text-primary-fixed/80 text-lg mb-12 max-w-xl mx-auto">Join over 50,000 proactive users who trust Cure Bot for their daily clinical insights.</p>
+<div class="flex flex-col sm:flex-row gap-4 justify-center">
+<button onclick="window.location.href='/signup'" class="bg-white text-primary px-10 py-5 rounded-2xl font-headline font-extrabold text-xl shadow-2xl active:scale-95 transition-transform">
+                            Create Free Account
+                        </button>
+<button onclick="window.location.href='/signup'" class="bg-primary-container/20 backdrop-blur-md text-white border border-white/20 px-10 py-5 rounded-2xl font-headline font-extrabold text-xl active:scale-95 transition-transform">
+                            Talk to Sales
+                        </button>
+</div>
+</div>
+<!-- Decorative background elements -->
+<div class="absolute top-0 right-0 w-96 h-96 bg-white/5 rounded-full -mr-20 -mt-20 blur-3xl"></div>
+<div class="absolute bottom-0 left-0 w-64 h-64 bg-black/5 rounded-full -ml-20 -mb-20 blur-2xl"></div>
+</div>
+</section>
+</main>
+<!-- Bottom Nav (Mobile Only) -->
+<nav class="md:hidden fixed bottom-0 left-0 w-full z-50 bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl flex justify-around items-center px-4 pb-6 pt-2 rounded-t-[1.5rem] shadow-2xl no-border tonal-layering">
+<a class="flex flex-col items-center justify-center bg-emerald-50 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300 rounded-2xl p-2 active:scale-90 transition-transform" href="#">
+<span class="material-symbols-outlined" data-icon="chat_bubble" style="font-variation-settings: 'FILL' 1;">chat_bubble</span>
+<span class="font-label text-[10px] font-bold uppercase tracking-widest mt-1">Chat</span>
+</a>
+<a class="flex flex-col items-center justify-center text-slate-400 dark:text-slate-500 p-2 hover:text-emerald-500 transition-transform" href="#">
+<span class="material-symbols-outlined" data-icon="history_edu">history_edu</span>
+<span class="font-label text-[10px] font-bold uppercase tracking-widest mt-1">Records</span>
+</a>
+<a class="flex flex-col items-center justify-center text-slate-400 dark:text-slate-500 p-2 hover:text-emerald-500 transition-transform" href="#">
+<span class="material-symbols-outlined" data-icon="monitor_heart">monitor_heart</span>
+<span class="font-label text-[10px] font-bold uppercase tracking-widest mt-1">Health</span>
+</a>
+<a class="flex flex-col items-center justify-center text-slate-400 dark:text-slate-500 p-2 hover:text-emerald-500 transition-transform" href="#">
+<span class="material-symbols-outlined" data-icon="account_circle">account_circle</span>
+<span class="font-label text-[10px] font-bold uppercase tracking-widest mt-1">Profile</span>
+</a>
+</nav>
+<!-- Footer -->
+<footer class="bg-surface-container px-6 py-12 md:pb-24">
+<div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-8">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-2xl" data-icon="clinical_notes">clinical_notes</span>
+<span class="font-headline font-extrabold text-xl text-on-surface">Cure Bot</span>
+</div>
+<div class="flex gap-8">
+<a class="text-on-surface-variant hover:text-primary transition-colors text-sm font-medium" href="#">Privacy Policy</a>
+<a class="text-on-surface-variant hover:text-primary transition-colors text-sm font-medium" href="#">Terms of Service</a>
+<a class="text-on-surface-variant hover:text-primary transition-colors text-sm font-medium" href="#">Cookie Policy</a>
+</div>
+<p class="text-on-surface-variant text-sm">by dhanenthira M,kiruthika sakthi V,
+    Karunya MP,Suvetha SP,Sanchana R</p>
+</div>
+</footer>
+</body></html>
