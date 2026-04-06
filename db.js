@@ -43,23 +43,25 @@ function parseSslConfig() {
     const sslMode = (process.env.DB_SSL_MODE || process.env.DB_SSL || process.env.Db_SSL || "").toLowerCase();
     const caPath = process.env.DB_SSL_CA;
 
-    if (!sslMode && process.env.DB_HOST && process.env.DB_HOST !== "localhost") {
-        return { rejectUnauthorized: false };
+    // Detection for hosted environments (Render, Aiven, Cleardb)
+    const isHosted = process.env.DB_HOST && process.env.DB_HOST !== "localhost" && !process.env.DB_HOST.includes("127.0.0.1");
+
+    // Default configuration for common cloud hosting SSL requirements
+    if (isHosted && (!sslMode || sslMode === "true" || sslMode === "required" || sslMode === "preferred")) {
+        return { 
+            rejectUnauthorized: false // Required for hosted MySQL if not providing a custom CA cert
+        };
     }
 
     if (!sslMode || sslMode === "false" || sslMode === "off" || sslMode === "disabled") {
         return undefined;
     }
 
-    if (caPath) {
+    if (caPath && fs.existsSync(caPath)) {
         return {
             ca: fs.readFileSync(caPath, "utf8"),
             rejectUnauthorized: sslMode !== "insecure"
         };
-    }
-
-    if (sslMode === "required" || sslMode === "true" || sslMode === "preferred") {
-        return {};
     }
 
     if (sslMode === "insecure") {
