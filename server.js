@@ -40,6 +40,12 @@ async function ensureDatabase(res) {
     });
 }
 
+function getDatabaseUnavailableMessage() {
+    return db.isConfiguredForHostedDb()
+        ? "Database connection is unavailable. Check DB_PORT and SSL settings for your hosted MySQL instance."
+        : "Database connection is unavailable. Check that your MySQL server is running and the database credentials are correct.";
+}
+
 // ─── Middleware ────────────────────────────────────────────────────────────────
 app.use(cors());
 app.use(bodyParser.json({ limit: "10mb" }));
@@ -105,6 +111,12 @@ app.post("/api/signup", async (req, res) => {
 
     } catch (err) {
         console.error("Signup error:", err);
+        if (db.isConnectionError(err)) {
+            return res.status(503).json({ error: getDatabaseUnavailableMessage() });
+        }
+        if (err.code === "ER_DUP_ENTRY") {
+            return res.status(409).json({ error: "An account with this email or username already exists." });
+        }
         return res.status(500).json({ error: "Something went wrong. Please try again." });
     }
 });
@@ -159,6 +171,9 @@ app.post("/api/login", async (req, res) => {
 
     } catch (err) {
         console.error("Login error:", err);
+        if (db.isConnectionError(err)) {
+            return res.status(503).json({ error: getDatabaseUnavailableMessage() });
+        }
         return res.status(500).json({ error: "Something went wrong. Please try again." });
     }
 });

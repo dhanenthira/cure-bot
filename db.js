@@ -50,6 +50,38 @@ const promisePool = pool.promise();
 
 let lastConnectionError = null;
 
+const connectionErrorCodes = new Set([
+    "ECONNREFUSED",
+    "ECONNRESET",
+    "ENOTFOUND",
+    "EHOSTUNREACH",
+    "ETIMEDOUT",
+    "EAI_AGAIN",
+    "PROTOCOL_CONNECTION_LOST",
+    "PROTOCOL_ENQUEUE_AFTER_FATAL_ERROR",
+    "PROTOCOL_PACKETS_OUT_OF_ORDER",
+    "ER_ACCESS_DENIED_ERROR",
+    "ER_CON_COUNT_ERROR",
+    "HANDSHAKE_SSL_ERROR"
+]);
+
+function isConnectionError(err) {
+    return Boolean(err && connectionErrorCodes.has(err.code));
+}
+
+async function runQuery(method, args) {
+    try {
+        const result = await promisePool[method](...args);
+        lastConnectionError = null;
+        return result;
+    } catch (err) {
+        if (isConnectionError(err)) {
+            lastConnectionError = err;
+        }
+        throw err;
+    }
+}
+
 async function ping() {
     try {
         await promisePool.query("SELECT 1");
@@ -68,8 +100,9 @@ async function ping() {
 ping();
 
 module.exports = {
-    query: (...args) => promisePool.query(...args),
-    execute: (...args) => promisePool.execute(...args),
+    query: (...args) => runQuery("query", args),
+    execute: (...args) => runQuery("execute", args),
     getLastConnectionError: () => lastConnectionError,
-    isConfiguredForHostedDb: () => Boolean(process.env.DB_HOST && process.env.DB_HOST !== "localhost")
+    isConfiguredForHostedDb: () => Boolean(process.env.DB_HOST && process.env.DB_HOST !== "localhost"),
+    isConnectionError
 };
