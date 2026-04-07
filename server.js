@@ -336,24 +336,3 @@ app.listen(PORT, () => {
     console.log(`   Signup : http://localhost:${PORT}/signup`);
     console.log(`   Chat   : http://localhost:${PORT}/chat`);
 });
-app.post("/chat", async (req, res) => {
-    const userMessage = req.body.message;
-
-    try {
-        const researchData = await scrapeHealthData(userMessage);
-
-        const aiResponse = await getAIResponse(userMessage, researchData);
-
-        res.json({
-            reply: aiResponse,
-            source: "AI"
-        });
-
-    } catch (err) {
-        console.error(err);
-        res.json({
-            reply: "Something went wrong",
-            source: "error"
-        });
-    }
-});
